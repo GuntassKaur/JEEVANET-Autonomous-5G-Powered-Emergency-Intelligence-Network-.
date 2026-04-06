@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEEVANET — National Emergency Network | Google Hackathon Edition</title>
+  <link rel="stylesheet" href="css/premium.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo-wrap">
+        <h1 class="logo">JEEVANET<span>.</span></h1>
+        <div class="status-pills">
+          <div class="pill green"><div class="status-dot"></div>CORE ONLINE</div>
+          <div class="security-badge">AES-256 E2EE</div>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active" data-view="dashboard">
+          <i data-lucide="layout-grid"></i><span>Operational Hub</span>
+        </a>
+        <a href="#" class="nav-item" data-view="incidents">
+          <i data-lucide="activity"></i><span>Threat Response</span>
+        </a>
+        <a href="#" class="nav-item" data-view="ambulance">
+          <i data-lucide="cross"></i><span>Ambulance Mesh</span>
+        </a>
+        <a href="#" class="nav-item" data-view="sos">
+          <i data-lucide="shield-check"></i><span>Women Safety</span>
+        </a>
+        <a href="#" class="nav-item" data-view="ai">
+          <i data-lucide="cpu"></i><span>Predictive Core</span>
+        </a>
+        <a href="#" class="nav-item" data-view="settings">
+          <i data-lucide="sliders-horizontal"></i><span>Global Config</span>
+        </a>
+      </nav>
+
+      <div style="margin-top: auto;">
+        <div class="glass-card" style="padding: 16px; border-left: 4px solid var(--neon-gold); background: rgba(255, 215, 0, 0.03);">
+          <div class="solar-status"><div class="solar-dot"></div>SOLAR-POWERED GRID</div>
+          <p style="font-size: 0.75rem; margin-top: 8px;">94.2% of corridor nodes are grid-independent (Solar + Battery Mesh).</p>
+        </div>
+        <div style="margin-top: 16px; font-size: 0.6rem; color: var(--text-muted); text-align: center; letter-spacing: 1px;">
+          NATIONWIDE DISASTER SCALE | V2.1.2026
+        </div>
+      </div>
+    </aside>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="real-time">
+        <div class="clock" id="clock">00:00:00</div>
+        <div class="signal-5g"><span></span><span></span><span></span><span></span></div>
+        <div style="font-size: 0.75rem; font-weight: 800; color: var(--neon-blue);">5G URLLC NETWORK</div>
+      </div>
+
+      <div class="status-badges" id="topStatus">
+        <div class="badge incident">📡 SYSTEM SCANNING</div>
+        <div class="badge ambulance">🚑 AMB STAGED: 24</div>
+        <div class="badge corridor">🟢 CORRIDOR: READY</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="text-align: right;">
+          <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">CMD_NODE_ID: 102</div>
+          <div style="font-size: 0.65rem; color: var(--neon-purple); font-weight: 800; letter-spacing: 1px;">ZERO-TRUST SESSION</div>
+        </div>
+        <div style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--neon-blue); display: flex; align-items: center; justify-content: center; background: rgba(0, 209, 255, 0.05); box-shadow: var(--glow-blue);">
+          <i data-lucide="user-plus" style="width: 20px; color: var(--neon-blue);"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      
+      <!-- OPERATIONAL HUB (MAP) -->
+      <div id="view-dashboard" class="view-panel active dashboard-view">
+        <div class="map-surface">
+          <canvas id="mapCanvas"></canvas>
+          
+          <div class="map-hud">
+            <div class="glass-card" id="hudCardA">
+              <h4>EDGE AI NODE: ACTIVE</h4>
+              <p id="hudTextA">System monitoring. Sector 4 G-Block traffic density optimal. Multi-modal sensor fusion enabled.</p>
+            </div>
+            
+            <div class="glass-card" id="hudCardB" style="display: none;">
+              <h4 style="color: var(--neon-red);">THREAT DETECTED</h4>
+              <p id="hudTextB">Collision ID #8421. CV fusion confirmed impact at 28.61N, 77.21E. Confidence: 99.8%.</p>
+            </div>
+
+            <button class="cyber-btn" id="storyTrig">
+              <i data-lucide="play-circle"></i>
+              RUN STORY SEQUENCE
+            </button>
+          </div>
+
+          <!-- Story Telling Navigation -->
+          <div class="story-overlay">
+            <div class="story-step active" data-step="0">01. SCAN</div>
+            <div class="story-step" data-step="1">02. ALERT</div>
+            <div class="story-step" data-step="2">03. DISPATCH</div>
+            <div class="story-step" data-step="3">04. CORRIDOR</div>
+            <div class="story-step" data-step="4">05. ER LINK</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THREAT RESPONSE (INCIDENTS) -->
+      <div id="view-incidents" class="view-panel">
+        <h2 style="font-size: 2.5rem; margin-bottom: 32px; font-weight: 900;">National Threat Grid</h2>
+        <div class="metrics-stack" style="margin-bottom: 40px;">
+           <div class="metric-box"><div class="label">ACTIVE EVENTS</div><div class="value">02</div></div>
+           <div class="metric-box"><div class="label">RESPONSE TIME</div><div class="value">9s</div></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+           <div class="glass-card" style="border-left-color: var(--neon-red);">
+              <h4 style="color: var(--neon-red);">INCIDENT #8421</h4>
+              <p style="font-size: 0.9rem;">High-speed collision. Sector 4. Ground ambulance + UAV-02 deployed. Route Alpha pre-empted.</p>
+           </div>
+           <div class="glass-card" style="border-left-color: var(--neon-purple);">
+              <h4 style="color: var(--neon-purple);">SOS #112</h4>
+              <p style="font-size: 0.9rem;">Metro Hub. AI Voice Stress Alert. Silent surveillance active. Responder ETA 2m.</p>
+           </div>
+        </div>
+      </div>
+
+      <!-- AMBULANCE MESH -->
+      <div id="view-ambulance" class="view-panel">
+        <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 32px;">
+           <div style="height: 500px; background: rgba(0,0,0,0.4); border-radius: var(--radius-lg); border: 2px solid var(--cyber-border); position: relative; overflow: hidden;">
+              <div class="scanline"></div>
+              <div style="position: absolute; top: 20px; left: 20px; font-family: 'JetBrains Mono'; font-weight: 800; color: var(--neon-blue);">AMB-204_TRACKING: 19:42:01.42</div>
+              <img src="https://user-images.githubusercontent.com/1090333/178128509-322ca2a3-2c1b-4b13-863a-86105f24e930.png" style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.4) saturate(1.5) contrast(1.2);">
+           </div>
+           <div style="display: flex; flex-direction: column; gap: 24px;">
+              <div class="glass-card" style="height: 500px; display: flex; flex-direction: column; gap: 24px;">
+                 <h4>WEARABLE TELEMETRY (SIM)</h4>
+                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div style="text-align: center; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px;">
+                       <div style="font-size: 0.7rem; color: var(--text-muted);">BPM</div>
+                       <div style="font-size: 2rem; font-weight: 800; color: var(--neon-red);" id="val-bpm">84</div>
+                    </div>
+                    <div style="text-align: center; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--neon-green);">
+                       <div style="font-size: 0.7rem; color: var(--text-muted);">SpO2</div>
+                       <div style="font-size: 2rem; font-weight: 800; color: var(--neon-green);" id="val-spo2">98%</div>
+                    </div>
+                 </div>
+                 <div style="margin-top: auto;">
+                    <div class="label" style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 12px;">5G UPLINK RELIABILITY</div>
+                    <div style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;"><div style="width: 99.8%; height: 100%; background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue);"></div></div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- RIGHT PANEL (ANALYTICS & STORY FLOW) -->
+    <aside class="right-panel">
+      <section class="panel-section">
+        <div class="panel-title">
+          <i data-lucide="bar-chart-3" style="width: 16px;"></i>
+          IMPACT ANALYTICS
+        </div>
+        <div class="viz-container" id="livesChart">
+           <!-- CSS Bar Charts -->
+           <div class="viz-bar" style="height: 40%;"></div>
+           <div class="viz-bar" style="height: 65%;"></div>
+           <div class="viz-bar" style="height: 35%;"></div>
+           <div class="viz-bar" style="height: 85%; background: var(--neon-green); box-shadow: var(--glow-green);"></div>
+           <div class="viz-bar" style="height: 55%;"></div>
+           <div class="viz-bar" style="height: 20%;"></div>
+        </div>
+        <div class="metrics-stack">
+           <div class="metric-box"><div class="label">LIVES SAVED</div><div class="value" id="livesSaved">137</div></div>
+           <div class="metric-box"><div class="label">EFFICIENCY</div><div class="value" style="color: var(--neon-green);">94%</div></div>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-title">
+          <i data-lucide="terminal" style="width: 16px;"></i>
+          STORYTELLING LOG
+        </div>
+        <div class="event-log" id="eventLog">
+          <!-- Populated via story sequence -->
+        </div>
+      </section>
+
+      <section class="panel-section" style="margin-top: auto;">
+        <div class="glass-card" style="padding: 16px; border: 1px dashed rgba(255,255,255,0.1);">
+          <h4 style="font-size: 0.65rem; color: var(--neon-purple);">SCALABILITY NARRATIVE</h4>
+          <p style="font-size: 0.75rem; letter-spacing: 0.02em;">Integrating nationwide hospital ORs, air ambulance dispatch, and disaster response mesh. Built for Bharat scale.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- VIRTUAL ER MODAL -->
+  <div class="modal-overlay" id="erModal">
+    <div class="modal-frame">
+      <div class="modal-content">
+        <div class="video-stream">
+          <div class="scanline"></div>
+          <div class="stream-hud">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+               <div style="background: rgba(255, 59, 59, 0.8); color: #fff; padding: 4px 12px; font-size: 0.7rem; font-weight: 900; border-radius: 4px;">LIVE | AMB-204_CAM_01</div>
+               <div style="color: rgba(255,255,255,0.5); font-family: 'JetBrains Mono'; font-size: 0.7rem;">ZERO-TRUST_CHANNEL_ACTIVE</div>
+            </div>
+          </div>
+          <div style="width: 100%; height: 100%; background: #000; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #fff; text-shadow: 0 0 10px #fff;">
+             <i data-lucide="video" style="width: 48px; opacity: 0.5;"></i>
+          </div>
+        </div>
+        <div style="padding: 40px; display: flex; flex-direction: column; gap: 24px; position: relative; background: rgba(5,10,20,0.95);">
+           <div style="position: absolute; top: 20px; right: 20px; cursor: pointer; color: var(--text-muted);" id="erClose">
+              <i data-lucide="x" style="width: 24px;"></i>
+           </div>
+           <h2>Virtual ER Peering</h2>
+           <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">AIIMS Trauma Center Peering Session active. Surgeon overwatch enabled via 5G slice.</p>
+           
+           <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px;">
+              <div class="metric-box" style="text-align: left; padding: 16px;">
+                 <div class="label">TELEMETRY LATENCY</div>
+                 <div class="value" style="font-size: 1.2rem; color: var(--neon-green);">8ms</div>
+              </div>
+              <button class="cyber-btn" style="width: 100%; justify-content: center; background: var(--neon-purple); color: #fff;">
+                 <i data-lucide="shield-check"></i> AUTHORIZE BREAK-GLASS
+              </button>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/premium.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

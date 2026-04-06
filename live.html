@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050a12" />
+  <meta name="description" content="JEEVANET live command center — full interactive demo: map, ambulance, SOS, AI heatmaps, settings. Accident → Ambulance → Corridor → Hospital → ER." />
+  <title>JEEVANET — Live Command Center (Interactive Demo)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/jeevanet.css" />
+
+</head>
+<body>
+  <div id="heroScreen" class="hero-screen">
+    <canvas id="heroCanvas" class="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-vignette" aria-hidden="true"></div>
+    <div class="hero-grid-bg" aria-hidden="true"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">5G · Edge AI · Zero Trust · National mesh</p>
+      <h1 class="hero-title">
+        JEEVANET <span class="hero-title-sep">—</span>
+        <span class="hero-title-sub">India’s AI &amp; 5G Powered National Emergency Operating System</span>
+      </h1>
+      <p class="hero-tagline">
+        <span>Predict</span><i class="hero-dot">•</i><span>Respond</span><i class="hero-dot">•</i><span>Protect</span>
+      </p>
+      <div class="hero-flow-strip" role="group" aria-label="Emergency chain for judges">
+        <span class="hero-flow-pill hero-flow-pill--red">① Accident</span>
+        <span class="hero-flow-arr" aria-hidden="true">→</span>
+        <span class="hero-flow-pill">② Ambulance</span>
+        <span class="hero-flow-arr" aria-hidden="true">→</span>
+        <span class="hero-flow-pill hero-flow-pill--green">③ Corridor</span>
+        <span class="hero-flow-arr" aria-hidden="true">→</span>
+        <span class="hero-flow-pill">④ Hospital</span>
+        <span class="hero-flow-arr" aria-hidden="true">→</span>
+        <span class="hero-flow-pill hero-flow-pill--blue">⑤ ER</span>
+      </div>
+      <p class="hero-lead">JEEVANET — India’s AI &amp; 5G Powered National Emergency Operating System</p>
+      <div class="hero-actions">
+        <button type="button" class="hero-cta" id="heroLaunch">Enter live command center</button>
+        <button type="button" class="hero-skip" id="heroSkip">Skip intro</button>
+      </div>
+      <p class="hero-demo-hint">
+        <strong>Demo mode:</strong> F11 fullscreen · record at <strong>1920×1080</strong> · follow the top strip <strong>Accident → Ambulance → Corridor → Hospital → ER</strong> · try every sidebar view + Virtual ER
+      </p>
+      <p class="hero-site-link"><a href="index.html">← JEEVANET program website</a></p>
+    </div>
+  </div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <a href="index.html" class="logo logo--link">JEEVANET</a>
+      <p class="logo-tagline">Judge chain: <span>Accident</span> → <span>ER</span> · <a href="index.html" class="inline-site-link">Program site</a></p>
+      <div class="live-pill"><span class="live-dot"></span> SYSTEM STATUS: LIVE</div>
+      <nav class="nav" aria-label="Primary">
+        <a class="active" href="#" data-nav="dashboard" data-view="dashboard"><span class="nav-icon">◉</span> Dashboard</a>
+        <a href="#" data-nav="ambulance" data-view="ambulance"><span class="nav-icon">⬡</span> Ambulance Tracking</a>
+        <a href="#" data-nav="sos" data-view="sos"><span class="nav-icon">◎</span> Women Safety SOS</a>
+        <a href="#" data-nav="ai" data-view="ai"><span class="nav-icon">◇</span> AI Prediction</a>
+        <a href="#" data-nav="settings" data-view="settings"><span class="nav-icon">⚙</span> Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="index.html" class="sidebar-back">← Back to website</a>
+        <span class="sidebar-footer-meta">National mesh · 5G URLLC · live sim</span>
+      </div>
+    </aside>
+
+    <header class="topbar">
+      <div class="clock-wrap">
+        <div class="clock" id="clock">00:00:00</div>
+        <div class="signal-5g" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <span class="label-5g">5G</span>
+      </div>
+      <div class="badges">
+        <span class="badge incident" id="badgeIncident">🔴 Incident Detected</span>
+        <span class="badge ambulance">🚑 Ambulance En Route</span>
+        <span class="badge corridor">🟢 Green Corridor Active</span>
+      </div>
+    </header>
+
+    <div class="sec-bar" role="status">
+      <div class="sec-bar-top">
+        <div class="sec-items">
+          <span class="sec-pill"><strong>🔐 E2E</strong> AES-256-GCM · emergency payloads</span>
+          <span class="sec-pill"><strong>Zero Trust</strong> · JIT access · device attestation</span>
+          <span class="sec-pill">mTLS service mesh · <strong>National key vault</strong></span>
+        </div>
+        <div class="story-flow story-flow--5" id="storyFlow" aria-label="Emergency chain">
+          <span class="story active" data-i="0">① Accident</span>
+          <span class="story-arrow">→</span>
+          <span class="story" data-i="1">② Ambulance</span>
+          <span class="story-arrow">→</span>
+          <span class="story" data-i="2">③ Corridor</span>
+          <span class="story-arrow">→</span>
+          <span class="story" data-i="3">④ Hospital</span>
+          <span class="story-arrow">→</span>
+          <span class="story" data-i="4">⑤ ER</span>
+        </div>
+      </div>
+      <div class="lifecycle-bar lifecycle-bar--5" id="lifecycleBar" aria-label="Emergency chain for judges">
+        <div class="life-seg active" data-phase="0">
+          <strong>ACCIDENT</strong>
+          <small>Edge fusion · CV · citizen · 112</small>
+        </div>
+        <div class="life-seg" data-phase="1">
+          <strong>AMBULANCE</strong>
+          <small>Dispatch AMB-204 · crew · ETA</small>
+        </div>
+        <div class="life-seg" data-phase="2">
+          <strong>CORRIDOR</strong>
+          <small>Green lights · rail · drones · 5G</small>
+        </div>
+        <div class="life-seg" data-phase="3">
+          <strong>HOSPITAL</strong>
+          <small>Bed/OR alert · triage AI · handoff</small>
+        </div>
+        <div class="life-seg" data-phase="4">
+          <strong>ER / TELE</strong>
+          <small>Virtual ER · vitals stream · Zero Trust</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace" id="workspace">
+      <section id="view-dashboard" class="view view--active" data-view-id="dashboard" aria-label="Dashboard">
+        <div class="split-layout">
+          <div class="main">
+            <div class="map-slot" id="map-slot-dashboard">
+      <div class="map-frame" id="mapFrame">
+        <div class="map-holo-top" aria-hidden="true">
+          <span class="holo-tag">EDGE AI</span>
+          <div class="holo-stream" title="Incident tensors · V2X · SOS streams"></div>
+          <span class="holo-tag cloud">CLOUD AI</span>
+          <span class="holo-tag story-pill">Accident → Ambulance → Corridor → Hospital → ER</span>
+        </div>
+        <canvas id="mapCanvas" aria-label="Live operations map: corridor, incidents, drones, signals, railway"></canvas>
+        <div class="map-legend">
+          <div style="color:var(--neon-blue);letter-spacing:0.1em;font-weight:700;margin-bottom:4px">MAP KEY</div>
+          <span><i class="lg lg-h"></i> Risk heat · AI hotspots</span>
+          <span><i class="lg lg-d"></i> Drone first-response</span>
+          <span><i class="lg lg-s"></i> Solar smart signals</span>
+        </div>
+        <div class="map-overlay">
+          <div class="holo-card">
+            <h4>Cloud AI · Fastest route + air assets</h4>
+            <p id="routeText">Optimizing corridor: ETA 4m 12s · 3 signals pre-cleared</p>
+            <div class="edge-ai-strip" style="margin-top:10px">
+              <span class="edge-node">EDGE-01 ✓</span>
+              <span class="edge-node">UAV-02 ✓</span>
+              <span class="edge-node">V2X SYNC</span>
+              <span class="edge-node" style="border-color:rgba(255,200,80,0.4);color:#ffc964">☀ SOLAR</span>
+            </div>
+          </div>
+          <button type="button" class="btn-modal" id="openModal">Virtual ER / Tele-surgery</button>
+        </div>
+      </div>
+            </div>
+
+            <section class="system-flow" aria-label="End-to-end system data flow">
+        <div class="system-flow-title">
+          <strong>SYSTEM FLOW</strong>
+          <span>Detect → dispatch → drones · edge · cloud orchestration</span>
+        </div>
+        <div class="flow-row" id="flowRow">
+          <div class="flow-node active" data-step="0">
+            <span class="flow-node-ico" aria-hidden="true">📱</span>
+            <small>Citizen &amp; ops PWA</small>
+            <code>FE</code>
+          </div>
+          <div class="flow-connector" aria-hidden="true"></div>
+          <div class="flow-node" data-step="1">
+            <span class="flow-node-ico" aria-hidden="true">🔐</span>
+            <small>API gateway · auth</small>
+            <code>GW</code>
+          </div>
+          <div class="flow-connector" aria-hidden="true"></div>
+          <div class="flow-node pulse-green" data-step="2">
+            <span class="flow-node-ico" aria-hidden="true">⚙</span>
+            <small>Core backend · dispatch</small>
+            <code>API</code>
+          </div>
+          <div class="flow-connector" aria-hidden="true"></div>
+          <div class="flow-node pulse-green" data-step="3">
+            <span class="flow-node-ico" aria-hidden="true">📡</span>
+            <small>Edge mesh · V2X · signals</small>
+            <code>EDGE</code>
+          </div>
+          <div class="flow-connector" aria-hidden="true"></div>
+          <div class="flow-node" data-step="4">
+            <span class="flow-node-ico" aria-hidden="true">🚁</span>
+            <small>Drone fleet · first-aid drop</small>
+            <code>UAV</code>
+          </div>
+          <div class="flow-connector" aria-hidden="true"></div>
+          <div class="flow-node" data-step="5">
+            <span class="flow-node-ico" aria-hidden="true">☁</span>
+            <small>Cloud AI · routing · ER link</small>
+            <code>AI</code>
+          </div>
+        </div>
+      </section>
+          </div>
+
+          <aside class="right">
+      <div class="panel event-log">
+        <div class="panel-title">Event log <span style="color:var(--neon-green);font-size:0.65rem">● LIVE</span></div>
+        <p class="log-pipeline-hint">Pipeline: accident → ambulance → corridor (signals · rail · drones) → hospital → ER / tele</p>
+        <div class="log-list">
+          <div class="log-inner" id="logInner"></div>
+        </div>
+      </div>
+      <div class="panel analytics">
+        <div class="panel-title">Analytics</div>
+        <p class="analytics-sub">Predictive risk · efficiency · network health</p>
+        <div class="analytics-risk-head">📊 Hot zones · proactive staging</div>
+        <div class="heatmap-mini" aria-hidden="true">
+          <div class="heat-cell"></div><div class="heat-cell h3"></div><div class="heat-cell"></div><div class="heat-cell h2"></div><div class="heat-cell"></div><div class="heat-cell"></div>
+          <div class="heat-cell"></div><div class="heat-cell h1"></div><div class="heat-cell h2"></div><div class="heat-cell h1"></div><div class="heat-cell h3"></div><div class="heat-cell"></div>
+          <div class="heat-cell h4"></div><div class="heat-cell"></div><div class="heat-cell h2"></div><div class="heat-cell"></div><div class="heat-cell h1"></div><div class="heat-cell h3"></div>
+          <div class="heat-cell"></div><div class="heat-cell h3"></div><div class="heat-cell"></div><div class="heat-cell h4"></div><div class="heat-cell"></div><div class="heat-cell"></div>
+        </div>
+        <p class="predictive-meta">
+          <strong>Accident-prone zones</strong> ranked from multimodal history + weather + events.
+          <strong id="stagingText">3 ambulance staging points</strong> pre-positioned within SLA.
+        </p>
+        <div class="analytics-risk-head" style="color:var(--neon-blue);margin-top:12px">⚡ Live operations</div>
+        <div class="metrics metrics-4">
+          <div class="metric">
+            <div class="val" id="metricLives">127</div>
+            <div class="lbl">Lives saved (YTD sim)</div>
+          </div>
+          <div class="metric">
+            <div class="val" id="metricEff">94%</div>
+            <div class="lbl">Corridor efficiency</div>
+          </div>
+          <div class="metric">
+            <div class="val" id="metricRps" style="color:var(--neon-blue);text-shadow:var(--glow-blue)">2.4k</div>
+            <div class="lbl">Backend events / min</div>
+          </div>
+          <div class="metric">
+            <div class="val" id="metricLat" style="color:var(--text-primary)">18ms</div>
+            <div class="lbl">p95 API latency</div>
+          </div>
+        </div>
+        <div class="spark-wrap" aria-hidden="true">
+          <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+          <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+          <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+          <div class="spark"></div><div class="spark"></div>
+        </div>
+      </div>
+      <div class="panel sos-panel">
+        <div class="panel-title">Women safety · SOS</div>
+        <div class="sos-item">
+          <span class="sos-pulse"></span>
+          <div class="sos-text">
+            <strong>Safe corridor engaged</strong>
+            <small>Unit 7 · Night patrol linked · ETA police 2 min</small>
+          </div>
+        </div>
+        <div class="sos-item" style="opacity:0.85;border-color:rgba(0,209,255,0.3);background:rgba(0,209,255,0.08)">
+          <span class="sos-pulse" style="background:var(--neon-blue);box-shadow:var(--glow-blue)"></span>
+          <div class="sos-text">
+            <strong>Silent SOS verified</strong>
+            <small>AI voice stress · Location masked to responder only</small>
+          </div>
+        </div>
+        <div class="sos-item sos-wearable">
+          <div class="sos-wearable-top">
+            <span class="sos-pulse" style="background:var(--neon-green);box-shadow:var(--glow-green)"></span>
+            <div class="sos-text">
+              <strong>⌚ Wearable auto-SOS</strong>
+              <small>SpO₂ crash + fall · BLE → 5G uplink · encrypted</small>
+            </div>
+          </div>
+          <div class="wearable-bar" title="Vital confidence"><div class="wearable-fill"></div></div>
+        </div>
+        <div class="lang-ticker" id="langTicker" aria-live="polite">
+          <div class="lang-label">MULTI-LANGUAGE SOS BROADCAST</div>
+          <div id="langLine">Loading…</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">National innovation stack</div>
+        <div class="inno-grid">
+          <div class="inno-card">
+            <span class="inno-ico">🚁</span>
+            <strong>Drone first response</strong>
+            AED + kit dropped · arrives before ground crew on dense corridors.
+          </div>
+          <div class="inno-card green">
+            <span class="inno-ico">🌱</span>
+            <strong>Green energy signals</strong>
+            <span id="solarStat">Solar + battery buffers power 94% of smart junctions on this corridor.</span>
+          </div>
+          <div class="inno-card">
+            <span class="inno-ico">🌐</span>
+            <strong>22 languages</strong>
+            Voice + text TTS to citizen devices &amp; wearables.
+          </div>
+          <div class="inno-card">
+            <span class="inno-ico">🔐</span>
+            <strong>Cyber layer</strong>
+            HSM-backed keys · audit hash chain · air-gapped break-glass.
+          </div>
+        </div>
+      </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-ambulance" class="view" data-view-id="ambulance" aria-label="Ambulance tracking">
+        <div class="split-layout split-layout--ambulance">
+          <div class="main main--map-only">
+            <div class="map-slot map-slot--tall" id="map-slot-ambulance"></div>
+            <div class="ambulance-strip glass-strip">
+              <div class="strip-item"><span class="strip-k">Unit</span> <strong id="ambStripUnit">AMB-204</strong></div>
+              <div class="strip-item"><span class="strip-k">ETA</span> <strong id="ambStripEta">—</strong></div>
+              <div class="strip-item"><span class="strip-k">Corridor</span> <strong id="ambStripCorridor">5G URLLC</strong></div>
+              <button type="button" class="btn-strip" id="ambOpenEr">Open Virtual ER</button>
+            </div>
+          </div>
+          <aside class="right panel-ambulance-side">
+            <div class="panel glass-panel">
+              <div class="panel-title">Live vitals · patient stream</div>
+              <div class="vitals-grid" id="ambVitalsGrid">
+                <div class="vital-tile"><span>HR</span><strong id="ambVHr">82</strong><small>bpm</small></div>
+                <div class="vital-tile"><span>SpO₂</span><strong id="ambVSpo">98</strong><small>%</small></div>
+                <div class="vital-tile"><span>BP</span><strong id="ambVBp">118/76</strong></div>
+                <div class="vital-tile"><span>RR</span><strong id="ambVRr">16</strong><small>/min</small></div>
+              </div>
+              <div class="trail-meter">
+                <div class="trail-meter-label">Corridor clearance</div>
+                <div class="trail-bar"><div class="trail-fill" id="ambTrailFill"></div></div>
+              </div>
+            </div>
+            <div class="panel glass-panel">
+              <div class="panel-title">Route &amp; handoff</div>
+              <p class="route-copy" id="ambRouteCopy">Syncing with map simulation…</p>
+              <ul class="handoff-list" id="ambHandoffList">
+                <li class="done">Dispatch acknowledged</li>
+                <li class="active">Pre-empting signals along vector</li>
+                <li>Hospital bed reserved</li>
+              </ul>
+            </div>
+            <div class="panel glass-panel event-log event-log--compact">
+              <div class="panel-title">Ambulance event tail</div>
+              <div class="log-list log-list--short"><div class="log-inner" id="logInnerAmb"></div></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-sos" class="view" data-view-id="sos" aria-label="Women safety SOS">
+        <div class="full-panel sos-full">
+          <div class="sos-hero glass-panel">
+            <h2 class="sos-title">Women Safety · National SOS mesh</h2>
+            <p class="sos-lead">One tap · silent mode · wearable fall &amp; vitals · 22-language broadcast to verified responders only.</p>
+            <div class="sos-actions">
+              <button type="button" class="btn-sos-main" id="btnSosDemo">DEMO SOS — secure session</button>
+              <button type="button" class="btn-sos-silent" id="btnSosSilent">Silent SOS (stress AI)</button>
+            </div>
+            <div class="sos-status-line" id="sosStatusLine">Standby · Zero Trust session idle</div>
+          </div>
+          <div class="sos-grid">
+            <div class="glass-panel sos-card">
+              <h3>⌚ Wearable triggers</h3>
+              <div class="wearable-sim">
+                <button type="button" class="wear-sim-btn" data-wear="fall">Simulate fall</button>
+                <button type="button" class="wear-sim-btn" data-wear="spo2">SpO₂ drop</button>
+                <button type="button" class="wear-sim-btn" data-wear="hr">HR spike</button>
+              </div>
+              <div class="wearable-gauge"><div class="wearable-gauge-fill" id="wearGaugeFill"></div></div>
+              <p class="wear-hint" id="wearHint">BLE → edge gateway → encrypted 5G uplink</p>
+            </div>
+            <div class="glass-panel sos-card">
+              <h3>🌐 Multi-language alerts</h3>
+              <div class="lang-buttons" id="langButtons"></div>
+              <div class="lang-preview glass-inset" id="langPreview">Select a language to preview broadcast copy.</div>
+            </div>
+            <div class="glass-panel sos-card">
+              <h3>Responder chain</h3>
+              <ol class="responder-chain" id="responderChain">
+                <li>Nearest patrol unit (GPS + mesh)</li>
+                <li>Hospital safe corridor</li>
+                <li>Legal audit hash logged</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-ai" class="view" data-view-id="ai" aria-label="AI prediction">
+        <div class="full-panel ai-full">
+          <div class="ai-split">
+            <div class="ai-map-wrap glass-panel">
+              <div class="ai-map-head">
+                <h2>Accident-prone heat · proactive staging</h2>
+                <p>Live fusion: history · weather · events · V2X density</p>
+              </div>
+              <canvas id="heatmapCanvas" width="900" height="520" aria-label="AI risk heatmap"></canvas>
+              <div class="ai-legend">
+                <span><i class="lg-ai low"></i> Low</span>
+                <span><i class="lg-ai mid"></i> Elevated</span>
+                <span><i class="lg-ai high"></i> Critical</span>
+              </div>
+            </div>
+            <div class="ai-controls glass-panel">
+              <h3>Staging &amp; models</h3>
+              <label class="ctl-row"><span>Ambulance pre-position</span><input type="range" id="rngStaging" min="1" max="8" value="3" /></label>
+              <p class="ctl-meta" id="stagingMeta">3 staging nodes within SLA corridor</p>
+              <label class="ctl-row"><span>Heat sensitivity</span><input type="range" id="rngHeat" min="1" max="10" value="6" /></label>
+              <button type="button" class="btn-ai-refresh" id="btnHeatRefresh">Reseed hotspots</button>
+              <div class="ai-stats">
+                <div><strong id="aiStatZones">12</strong><small>hot cells</small></div>
+                <div><strong id="aiStatPred">94%</strong><small>precision (sim)</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view" data-view-id="settings" aria-label="Settings">
+        <div class="full-panel settings-full">
+          <div class="settings-grid">
+            <div class="glass-panel settings-card">
+              <h3>Signals &amp; corridor</h3>
+              <label class="toggle-row"><input type="checkbox" id="setSignalPreempt" checked /> <span>Signal pre-emption (green wave)</span></label>
+              <label class="toggle-row"><input type="checkbox" id="setRailSync" checked /> <span>Railway gate sync</span></label>
+              <label class="toggle-row"><input type="checkbox" id="setSolarCorridor" checked /> <span>Green energy corridor display</span></label>
+            </div>
+            <div class="glass-panel settings-card">
+              <h3>Air &amp; edge</h3>
+              <label class="toggle-row"><input type="checkbox" id="setDrones" checked /> <span>Drone first-response kits</span></label>
+              <label class="toggle-row"><input type="checkbox" id="setWearableUplink" checked /> <span>Wearable SOS uplink</span></label>
+              <label class="ctl-row"><span>Edge fusion gain</span><input type="range" id="setEdgeGain" min="0" max="100" value="72" /></label>
+            </div>
+            <div class="glass-panel settings-card">
+              <h3>Alerts &amp; security</h3>
+              <label class="toggle-row"><input type="checkbox" id="setLangBroadcast" checked /> <span>Multi-language SOS broadcast</span></label>
+              <label class="toggle-row"><input type="checkbox" id="setZeroTrustHud" checked /> <span>Zero Trust HUD in event log</span></label>
+              <label class="toggle-row"><input type="checkbox" id="setAuditChain" checked /> <span>Audit hash chain narration</span></label>
+            </div>
+          </div>
+          <p class="settings-foot">Settings apply to the live canvas simulation in real time.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h2 id="modalTitle">Virtual ER · Tele-surgery</h2>
+          <p class="modal-sub">Session active · vitals streaming · onboard HD uplink</p>
+        </div>
+        <button type="button" class="modal-close" id="closeModal" aria-label="Close">×</button>
+      </div>
+      <div class="modal-ribbon">
+        <strong>🔐 Cybersecurity:</strong> E2E encrypted video · TLS 1.3 · session keys rotated every 90s ·
+        <strong>Zero Trust</strong> session for clinical overlay · UAV downlink signed.
+      </div>
+      <div class="modal-grid">
+        <div class="vitals">
+          <h3>Patient vitals · streaming</h3>
+          <div class="vital-row"><span>Heart rate</span><span class="vital-val" id="vHr">82</span> <span style="color:var(--text-muted)">bpm</span></div>
+          <div class="vital-row"><span>SpO₂</span><span class="vital-val" id="vSpo">98</span> <span style="color:var(--text-muted)">%</span></div>
+          <div class="vital-row"><span>BP</span><span class="vital-val" id="vBp">118/76</span></div>
+          <div class="vital-row"><span>Latency</span><span class="vital-val" id="vLat">12</span> <span style="color:var(--text-muted)">ms</span></div>
+        </div>
+        <div class="cam-feed">
+          <h3>Onboard HD camera · AMB-204 · 🚁 drone overwatch</h3>
+          <div class="cam-placeholder">
+            <div class="scan-line"></div>
+            <div class="rec-dot">LIVE</div>
+            <span style="color:var(--text-muted);font-size:0.8rem;z-index:1">HD feed · stabilized · edge-encoded</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/jeevanet.js"></script>
+</body>
+</html>
